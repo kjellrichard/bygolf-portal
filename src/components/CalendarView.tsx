@@ -281,12 +281,13 @@ export function CalendarView({
                                     }}
                                     title={`${booking.user.name} - Bay ${booking.bayRef} - ${formatTime(bookingStart)}-${formatTime(bookingEnd)}`}
                                   >
-                                    <div className="booking-time">
-                                      {formatTime(bookingStart)} - {formatTime(bookingEnd)}
-                                    </div>
                                     <div className="booking-user">
                                       {booking.user.name} - {booking.players} {booking.players === 1 ? 'player' : 'players'}
                                     </div>
+                                    <div className="booking-time">
+                                      {formatTime(bookingStart)} - {formatTime(bookingEnd)}
+                                    </div>
+
                                     {booking.notes && (
                                       <div className="booking-notes">{booking.notes}</div>
                                     )}
