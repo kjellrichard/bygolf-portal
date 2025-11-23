@@ -186,10 +186,8 @@ export function CalendarView({
               <div key={dayKey} className="calendar-day-group">
                 <div className="calendar-day-header">
                   <div className="day-header-left">
-                    <div className="day-name">
-                      {day.toLocaleDateString('en-US', { weekday: 'short' })}
-                    </div>
-                    <div className="day-date">{dayKey}</div>
+
+                    <div className="day-date">{day.toLocaleDateString('en-US', { weekday: 'short' })} {dayKey}</div>
                   </div>
                   <div className="day-header-right">
                     <div className="day-stats">
