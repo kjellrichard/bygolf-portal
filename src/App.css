@@ -31,67 +31,152 @@ body {
   gap: 24px;
 }
 
-.header-right {
+.settings-btn {
+  padding: 8px 12px;
+  border: 1px solid rgba(255, 255, 255, 0.3);
+  border-radius: 4px;
+  background: rgba(255, 255, 255, 0.1);
+  color: white;
+  font-size: 20px;
+  cursor: pointer;
+  transition: all 0.2s;
+  line-height: 1;
+}
+
+.settings-btn:hover {
+  background: rgba(255, 255, 255, 0.2);
+  border-color: rgba(255, 255, 255, 0.5);
+}
+
+.settings-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(0, 0, 0, 0.7);
   display: flex;
   align-items: center;
-  gap: 8px;
+  justify-content: center;
+  z-index: 1000;
 }
 
-.header-right label {
-  color: white;
+.settings-modal {
+  background: white;
+  border-radius: 8px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+  max-width: 500px;
+  width: 90%;
+  max-height: 90vh;
+  overflow-y: auto;
+}
+
+.settings-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 20px 24px;
+  border-bottom: 1px solid #ddd;
+}
+
+.settings-header h2 {
+  margin: 0;
+  font-size: 20px;
+  color: #333;
+}
+
+.close-settings-btn {
+  padding: 4px 12px;
+  border: none;
+  background: transparent;
+  color: #666;
+  font-size: 24px;
+  line-height: 1;
+  cursor: pointer;
+  border-radius: 4px;
+  transition: all 0.2s;
+}
+
+.close-settings-btn:hover {
+  background: #f5f5f5;
+  color: #333;
+}
+
+.settings-content {
+  padding: 24px;
+}
+
+.settings-group {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  margin-bottom: 24px;
+}
+
+.settings-group label {
   font-weight: 500;
+  color: #333;
   font-size: 14px;
-  white-space: nowrap;
 }
 
-.header-right .token-input {
-  min-width: 300px;
-  padding: 6px 10px;
-  border: 1px solid rgba(255, 255, 255, 0.3);
+.settings-token-input {
+  width: 100%;
+  padding: 10px 12px;
+  border: 1px solid #ddd;
   border-radius: 4px;
-  font-size: 13px;
+  font-size: 14px;
   font-family: monospace;
-  background: rgba(255, 255, 255, 0.1);
-  color: white;
+  box-sizing: border-box;
 }
 
-.header-right .token-input::placeholder {
-  color: rgba(255, 255, 255, 0.5);
-}
-
-.header-right .token-input:focus {
+.settings-token-input:focus {
   outline: none;
-  border-color: rgba(255, 255, 255, 0.5);
-  background: rgba(255, 255, 255, 0.15);
+  border-color: #4a90e2;
+  box-shadow: 0 0 0 2px rgba(74, 144, 226, 0.1);
 }
 
-.header-right button {
-  padding: 6px 12px;
-  border: 1px solid rgba(255, 255, 255, 0.3);
+.clear-token-btn {
+  padding: 8px 16px;
+  border: 1px solid #ddd;
   border-radius: 4px;
-  background: rgba(255, 255, 255, 0.1);
-  color: white;
-  font-size: 13px;
+  background: #fff;
+  color: #d9534f;
+  font-size: 14px;
   font-weight: 500;
   cursor: pointer;
   transition: all 0.2s;
 }
 
-.header-right button:hover:not(:disabled) {
-  background: rgba(255, 255, 255, 0.2);
-  border-color: rgba(255, 255, 255, 0.5);
+.clear-token-btn:hover {
+  background: #fee;
+  border-color: #d9534f;
 }
 
-.header-right button:disabled {
-  opacity: 0.5;
+.settings-actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 8px;
+}
+
+.settings-load-btn {
+  padding: 10px 20px;
+  border: none;
+  border-radius: 4px;
+  background: #4a90e2;
+  color: white;
+  font-size: 14px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.settings-load-btn:hover:not(:disabled) {
+  background: #357abd;
+}
+
+.settings-load-btn:disabled {
+  opacity: 0.6;
   cursor: not-allowed;
-}
-
-.clear-token-btn {
-  padding: 6px 10px;
-  font-size: 18px;
-  line-height: 1;
-  min-width: 32px;
 }
 
 .token-prompt-overlay {
@@ -166,6 +251,95 @@ body {
   background: #357abd;
 }
 
+/* Mobile responsive styles */
+@media (max-width: 768px) {
+  .app-header {
+    padding: 12px 16px;
+  }
+
+  .app-header h1 {
+    font-size: 16px;
+  }
+
+  .settings-btn {
+    padding: 6px 10px;
+    font-size: 18px;
+  }
+
+  .settings-modal {
+    width: 95%;
+    max-height: 85vh;
+  }
+
+  .settings-header {
+    padding: 16px 20px;
+  }
+
+  .settings-header h2 {
+    font-size: 18px;
+  }
+
+  .settings-content {
+    padding: 20px;
+  }
+
+  .app-controls {
+    flex-direction: column;
+    gap: 12px;
+    padding: 12px 16px;
+  }
+
+  .control-group {
+    width: 100%;
+    flex-wrap: wrap;
+    gap: 6px;
+  }
+
+  .control-group:has(button[title]) {
+    flex-wrap: nowrap;
+    align-items: center;
+    white-space: nowrap;
+  }
+
+  .view-mode-buttons {
+    width: 100%;
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 4px;
+  }
+
+  .view-mode-buttons button {
+    width: 100%;
+    padding: 8px;
+    font-size: 12px;
+  }
+
+  input[type='date'] {
+    width: 100%;
+    padding: 8px;
+  }
+
+  button[title] {
+    padding: 8px 10px;
+    font-size: 16px;
+    min-width: 32px;
+  }
+
+  .token-prompt-modal {
+    width: 95%;
+    padding: 20px;
+    margin: 20px;
+  }
+
+  .token-prompt-modal h2 {
+    font-size: 18px;
+  }
+
+  .token-prompt-modal p {
+    font-size: 13px;
+  }
+}
+
 .app-header h1 {
   font-size: 18px;
   font-weight: 600;
@@ -186,6 +360,12 @@ body {
   display: flex;
   align-items: center;
   gap: 8px;
+  flex-wrap: nowrap;
+}
+
+.control-group:has(button[title]) {
+  flex-wrap: nowrap;
+  white-space: nowrap;
 }
 
 .control-group label {

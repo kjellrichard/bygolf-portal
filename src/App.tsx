@@ -17,6 +17,7 @@ function App() {
         return localStorage.getItem(TOKEN_STORAGE_KEY) || ''
     })
     const [showTokenPrompt, setShowTokenPrompt] = useState<boolean>(false)
+    const [showSettings, setShowSettings] = useState<boolean>(false)
     const today = new Date()
     const [viewMode, setViewMode] = useState<ViewMode>('day')
     const [startDate, setStartDate] = useState<Date>(today)
@@ -101,9 +102,14 @@ function App() {
         if (bearerToken.trim()) {
             localStorage.setItem(TOKEN_STORAGE_KEY, bearerToken)
             setShowTokenPrompt(false)
+            // Load bookings if token was just set and we don't have bookings yet
+            if (bookings.length === 0 && !loading) {
+                loadBookings(false)
+            }
         } else {
             localStorage.removeItem(TOKEN_STORAGE_KEY)
         }
+        // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [bearerToken])
 
     useEffect(() => {
@@ -179,6 +185,10 @@ function App() {
     const handleTokenSubmit = (token: string) => {
         setBearerToken(token)
         setShowTokenPrompt(false)
+        // Automatically load bookings when token is set
+        setTimeout(() => {
+            loadBookings(false)
+        }, 100)
     }
 
     return (
@@ -219,38 +229,73 @@ function App() {
             )}
 
             <header className="app-header">
-                <h1>ByGolf Portal - Calendar</h1>
-                <div className="header-right">
-                    <label htmlFor="bearer-token">Bearer Token:</label>
-                    <input
-                        id="bearer-token"
-                        type="text"
-                        value={bearerToken}
-                        onChange={(e) => setBearerToken(e.target.value)}
-                        placeholder="Enter bearer token"
-                        className="token-input"
-                    />
-                    <button onClick={() => loadBookings(false)} disabled={loading}>
-                        {loading ? 'Loading...' : 'Load Bookings'}
-                    </button>
-                    {bearerToken && (
-                        <button
-                            onClick={() => {
-                                setBearerToken('')
-                                setShowTokenPrompt(true)
-                            }}
-                            title="Clear token"
-                            className="clear-token-btn"
-                        >
-                            ×
-                        </button>
-                    )}
-                </div>
+                <h1>BYGOLF - Calendar</h1>
+                <button
+                    onClick={() => setShowSettings(true)}
+                    className="settings-btn"
+                    title="Settings"
+                >
+                    ⚙️
+                </button>
             </header>
+
+            {showSettings && (
+                <div className="settings-overlay" onClick={() => setShowSettings(false)}>
+                    <div className="settings-modal" onClick={(e) => e.stopPropagation()}>
+                        <div className="settings-header">
+                            <h2>Settings</h2>
+                            <button
+                                onClick={() => setShowSettings(false)}
+                                className="close-settings-btn"
+                                title="Close"
+                            >
+                                ×
+                            </button>
+                        </div>
+                        <div className="settings-content">
+                            <div className="settings-group">
+                                <label htmlFor="bearer-token">Bearer Token:</label>
+                                <input
+                                    id="bearer-token"
+                                    type="text"
+                                    value={bearerToken}
+                                    onChange={(e) => setBearerToken(e.target.value)}
+                                    placeholder="Enter bearer token"
+                                    className="settings-token-input"
+                                />
+                                {bearerToken && (
+                                    <button
+                                        onClick={() => {
+                                            setBearerToken('')
+                                            setShowTokenPrompt(true)
+                                        }}
+                                        className="clear-token-btn"
+                                        title="Clear token"
+                                    >
+                                        Clear Token
+                                    </button>
+                                )}
+                            </div>
+                            <div className="settings-actions">
+                                <button
+                                    onClick={() => {
+                                        loadBookings(false)
+                                        setShowSettings(false)
+                                    }}
+                                    disabled={loading}
+                                    className="settings-load-btn"
+                                >
+                                    {loading ? 'Loading...' : 'Load Bookings'}
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            )}
 
             <div className="app-controls">
                 <div className="control-group">
-                    <label htmlFor="view-mode">View Mode:</label>
+
                     <div className="view-mode-buttons">
                         <button
                             className={viewMode === 'day' ? 'active' : ''}
@@ -284,7 +329,7 @@ function App() {
                     >
                         ←
                     </button>
-                    <label htmlFor="start-date">Date:</label>
+
                     <input
                         id="start-date"
                         type="date"
