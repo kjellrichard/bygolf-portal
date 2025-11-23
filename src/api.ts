@@ -1,4 +1,4 @@
-import type { Booking } from './types'
+import type { BayOption, Booking } from './types'
 import { getStartOfDay, getEndOfDay, addDays } from './utils/dateUtils'
 
 const API_BASE_URL = 'https://api.yourgolfbooking.com'
@@ -41,3 +41,17 @@ export async function fetchBookings(
   return bookings
 }
 
+
+export async function fetchBayOptions({ bearerToken }: { bearerToken: string }): Promise<BayOption[]> {
+  const url = `${API_BASE_URL}/venue/bygolf/bay-options`
+  const response = await fetch(url, {
+    headers: {
+      'Authorization': `Bearer ${bearerToken}`
+    },
+  })
+  if (!response.ok) {
+    throw new Error(`Failed to fetch bay options: ${response.statusText}`)
+  }
+  const data = await response.json()
+  return data
+}

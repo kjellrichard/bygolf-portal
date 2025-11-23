@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react'
-import type { Booking, ViewMode } from './types'
-import { fetchBookings } from './api'
+import type { BayOption, Booking, ViewMode } from './types'
+import { fetchBayOptions, fetchBookings } from './api'
 import { CalendarView } from './components/CalendarView'
 import {
     getStartOfDay,
@@ -25,10 +25,21 @@ function App() {
     const [loading, setLoading] = useState<boolean>(false)
     const [error, setError] = useState<string | null>(null)
 
+    const [bayOptions, setBayOptions] = useState<BayOption[]>([])
+
+    const loadBayOptions = async () => {
+        const data = await fetchBayOptions({ bearerToken })
+        setBayOptions(data)
+    }
     const loadBookings = async (silent = false) => {
+
         if (!bearerToken.trim()) {
             setError('Please enter a bearer token')
             return
+        }
+
+        if (bayOptions.length === 0) {
+            await loadBayOptions()
         }
 
         if (!silent) {
@@ -301,6 +312,7 @@ function App() {
                 ) : (
                     <CalendarView
                         bookings={bookings}
+                        bayOptions={bayOptions}
                         viewMode={viewMode}
                         startDate={startDate}
                         endDate={endDate}

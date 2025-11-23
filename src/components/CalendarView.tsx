@@ -1,5 +1,5 @@
 import { useMemo, useState, useEffect } from 'react'
-import type { Booking, ViewMode } from '../types'
+import type { BayOption, Booking, ViewMode } from '../types'
 import {
   getStartOfDay,
   getEndOfDay,
@@ -13,6 +13,7 @@ import './CalendarView.css'
 
 interface CalendarViewProps {
   bookings: Booking[]
+  bayOptions: BayOption[]
   viewMode: ViewMode
   startDate: Date
   endDate: Date
@@ -20,6 +21,7 @@ interface CalendarViewProps {
 
 export function CalendarView({
   bookings,
+  bayOptions,
   viewMode,
   startDate,
   endDate,
@@ -130,7 +132,7 @@ export function CalendarView({
       if (document.visibilityState === 'visible') {
         setTick((prev) => prev + 1)
       }
-    }, 30000)
+    }, 1000 * 60 * 1) // 1 minute
 
     const handleFocus = () => {
       setTick((prev) => prev + 1)
@@ -285,12 +287,14 @@ export function CalendarView({
                                       {booking.user.name} - {booking.players} {booking.players === 1 ? 'player' : 'players'}
                                     </div>
                                     <div className="booking-time">
+                                      {bayOptions.find(option => option.id === booking.bayOptionId)?.name} -
                                       {formatTime(bookingStart)} - {formatTime(bookingEnd)}
                                     </div>
 
                                     {booking.notes && (
                                       <div className="booking-notes">{booking.notes}</div>
                                     )}
+
                                   </div>
                                 )
                               }
