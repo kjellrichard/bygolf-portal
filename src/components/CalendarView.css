@@ -193,7 +193,7 @@
   left: 0;
   right: 0;
   height: 2px;
-  background: #ff0000;
+  background: #03010c;
   opacity: 0.5;
   z-index: 100;
   pointer-events: none;
@@ -206,9 +206,10 @@
   top: -4px;
   width: 10px;
   height: 10px;
-  background: #ff0000;
+  background: #03010c;
 
   border-radius: 50%;
+  display: none;
 }
 
 .current-time-marker-time-column {
@@ -217,7 +218,7 @@
   right: 0;
   height: 2px;
   opacity: 0.5;
-  background: #ff0000;
+  background: #03010c;
 
   z-index: 100;
   pointer-events: none;
@@ -230,8 +231,10 @@
   top: -4px;
   width: 10px;
   height: 10px;
+  height: 0px;
   background: #ff0000;
   border-radius: 50%;
+  display: none;
 }
 
 /* Mobile responsive styles */
