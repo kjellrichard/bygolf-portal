@@ -1,0 +1,289 @@
+.calendar-view {
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+  height: 100%;
+  overflow: hidden;
+  background: #f5f5f5;
+}
+
+.calendar-view * {
+  box-sizing: border-box;
+}
+
+.calendar-scroll-container {
+  display: flex;
+  flex-direction: column;
+  flex: 1;
+  overflow: auto;
+  min-height: 0;
+}
+
+.calendar-header {
+  display: flex;
+  background: #fff;
+  border-bottom: 2px solid #ddd;
+  position: sticky;
+  top: 0;
+  z-index: 10;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  flex-shrink: 0;
+}
+
+.time-column-header {
+  width: 80px;
+  min-width: 80px;
+  max-width: 80px;
+  background: #fff;
+  border-right: 2px solid #ddd;
+  flex-shrink: 0;
+}
+
+.calendar-day-group {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  border-right: 2px solid #ccc;
+  min-width: 300px;
+}
+
+.calendar-day-group:last-child {
+  border-right: none;
+}
+
+.calendar-day-header {
+  padding: 6px 8px;
+  border-bottom: 2px solid #ddd;
+  background: #f8f9fa;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.day-header-left {
+  text-align: left;
+}
+
+.day-header-right {
+  text-align: right;
+}
+
+.day-name {
+  font-weight: 600;
+  font-size: 11px;
+  color: #666;
+  margin-bottom: 2px;
+}
+
+.day-date {
+  font-size: 12px;
+  color: #333;
+  font-weight: 500;
+}
+
+.day-stats {
+  font-size: 10px;
+  color: #666;
+  white-space: nowrap;
+}
+
+.calendar-body {
+  display: flex;
+  flex: 1;
+  min-height: 0;
+}
+
+.calendar-scroll-container::-webkit-scrollbar {
+  width: 12px;
+  height: 12px;
+}
+
+.calendar-scroll-container::-webkit-scrollbar-track {
+  background: #f1f1f1;
+}
+
+.calendar-scroll-container::-webkit-scrollbar-thumb {
+  background: #888;
+  border-radius: 6px;
+}
+
+.calendar-scroll-container::-webkit-scrollbar-thumb:hover {
+  background: #555;
+}
+
+.time-column {
+  width: 80px;
+  min-width: 80px;
+  max-width: 80px;
+  background: #fff;
+  border-right: 2px solid #ddd;
+  position: sticky;
+  left: 0;
+  z-index: 5;
+  flex-shrink: 0;
+}
+
+.time-slot {
+  height: 40px;
+  padding: 4px 6px;
+  text-align: right;
+  font-size: 11px;
+  color: #666;
+  border-bottom: 1px solid #eee;
+  display: flex;
+  align-items: flex-start;
+  justify-content: flex-end;
+}
+
+.calendar-day-group-column {
+  flex: 1;
+  display: flex;
+  min-width: 300px;
+  border-right: 2px solid #ccc;
+}
+
+.calendar-day-group-column:last-child {
+  border-right: none;
+}
+
+.calendar-bay-column {
+  flex: 1;
+  min-width: 150px;
+  position: relative;
+  box-sizing: border-box;
+}
+
+.current-time-marker {
+  position: absolute;
+  left: 0;
+  right: 0;
+  height: 2px;
+  background: #ff0000;
+  z-index: 100;
+  pointer-events: none;
+}
+
+.current-time-marker::before {
+  content: '';
+  position: absolute;
+  left: -6px;
+  top: -4px;
+  width: 10px;
+  height: 10px;
+  background: #ff0000;
+  border-radius: 50%;
+}
+
+.current-time-marker-time-column {
+  position: absolute;
+  left: 0;
+  right: 0;
+  height: 2px;
+  background: #ff0000;
+  z-index: 100;
+  pointer-events: none;
+}
+
+.current-time-marker-time-column::before {
+  content: '';
+  position: absolute;
+  right: -6px;
+  top: -4px;
+  width: 10px;
+  height: 10px;
+  background: #ff0000;
+  border-radius: 50%;
+}
+
+.time-cell {
+  height: 40px;
+  border-bottom: 1px solid #eee;
+  position: relative;
+  background: #fff;
+}
+
+.booking-block {
+  position: absolute;
+  left: 2px;
+  right: 2px;
+  background: #4a90e2;
+  color: #fff;
+  padding: 4px 6px;
+  border-radius: 4px;
+  font-size: 11px;
+  overflow: hidden;
+  cursor: pointer;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.2);
+  z-index: 1;
+  min-height: 40px;
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.booking-block:hover {
+  z-index: 10;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.3);
+  transform: scale(1.02);
+  transition: all 0.2s;
+}
+
+.booking-block.attended {
+  background: #5cb85c;
+}
+
+.booking-block.confirmed {
+  background: #f0ad4e;
+}
+
+.booking-block.cancelled {
+  background: #d9534f;
+  opacity: 0.7;
+}
+
+.booking-block.paid {
+  border-left: 3px solid #28a745;
+}
+
+.booking-block.unpaid {
+  border-left: 3px solid #ffc107;
+}
+
+.booking-block.isBlock {
+  background: #6c757d;
+  opacity: 0.8;
+}
+
+.booking-time {
+  font-weight: 600;
+  font-size: 10px;
+  white-space: nowrap;
+}
+
+.booking-user {
+  font-weight: 500;
+  font-size: 11px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.booking-bay {
+  font-size: 10px;
+  opacity: 0.9;
+}
+
+.booking-players {
+  font-size: 10px;
+  opacity: 0.85;
+}
+
+.booking-notes {
+  font-size: 9px;
+  opacity: 0.8;
+  font-style: italic;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
