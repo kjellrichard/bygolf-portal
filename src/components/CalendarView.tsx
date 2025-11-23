@@ -265,7 +265,7 @@ export function CalendarView({
                               const topOffset =
                                 ((startMinutes % 60) / 60) * 100
                               const height = (duration / 60) * 100
-
+                              const bayOption = bayOptions.find(option => option.id === booking.bayOptionId)
                               // Only render if this hour contains the booking start
                               if (
                                 bookingStart >= hourStart &&
@@ -279,14 +279,13 @@ export function CalendarView({
                                       top: `${topOffset}%`,
                                       height: `${Math.max(height, 5)}%`,
                                     }}
-                                    title={`${booking.user.name} - Bay ${booking.bayRef} - ${formatTime(bookingStart)}-${formatTime(bookingEnd)}`}
+                                    title={`${booking.user.name} - ${bayOption?.name} - ${formatTime(bookingStart)}-${formatTime(bookingEnd)}`}
                                   >
                                     <div className="booking-user">
-                                      {booking.user.name} - {booking.players} {booking.players === 1 ? 'player' : 'players'}
+                                      {booking.user.name} - {bayOption?.name}
                                     </div>
                                     <div className="booking-time">
-                                      {bayOptions.find(option => option.id === booking.bayOptionId)?.name} -
-                                      {formatTime(bookingStart)} - {formatTime(bookingEnd)}
+                                      {booking.players} {booking.players === 1 ? 'player' : 'players'} | {formatTime(bookingStart)} - {formatTime(bookingEnd)}
                                     </div>
 
                                     {booking.notes && (
