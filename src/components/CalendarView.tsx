@@ -1,4 +1,4 @@
-import { useMemo, useState, useEffect } from 'react'
+import { useMemo, useState, useEffect, useRef } from 'react'
 import type { BayOption, Booking, ViewMode } from '../types'
 import {
   getStartOfDay,
@@ -126,6 +126,32 @@ export function CalendarView({
 
   // Force re-render every 30 seconds to update current time marker
   const [, setTick] = useState(0)
+  const timeCellRef = useRef<HTMLDivElement>(null)
+  const [hourHeight, setHourHeight] = useState<number | null>(null)
+
+  // Measure actual hour height to account for zoom
+  useEffect(() => {
+    const measureHeight = () => {
+      if (timeCellRef.current) {
+        const height = timeCellRef.current.getBoundingClientRect().height
+        setHourHeight(height)
+      }
+    }
+
+    measureHeight()
+
+    // Re-measure on resize and zoom changes
+    window.addEventListener('resize', measureHeight)
+    const resizeObserver = new ResizeObserver(measureHeight)
+    if (timeCellRef.current) {
+      resizeObserver.observe(timeCellRef.current)
+    }
+
+    return () => {
+      window.removeEventListener('resize', measureHeight)
+      resizeObserver.disconnect()
+    }
+  }, [daysToShow])
 
   useEffect(() => {
     const interval = setInterval(() => {
@@ -160,16 +186,19 @@ export function CalendarView({
   const getCurrentTimePosition = (day: Date) => {
     if (!isToday(day)) return null
 
-    const currentHour = now.getHours()
-    const currentMinute = now.getMinutes()
-
+    let currentHour = now.getHours()
+    let currentMinute = now.getMinutes()
+    currentMinute = 30
+    currentHour = 22
     // Only show if current time is within the displayed hours (6-23)
     if (currentHour < 6 || currentHour > 23) return null
 
-    // Calculate position as percentage within the hour
+    // Use measured hour height if available, otherwise return null to avoid incorrect positioning
+    if (hourHeight === null) return null
+
     const hourIndex = currentHour - 6
-    const positionInHour = (currentMinute / 60) * 100
-    const topPosition = (hourIndex * 40) + (positionInHour / 100 * 40)
+    const positionInHour = (currentMinute / 60)
+    const topPosition = (hourIndex * hourHeight) + (hourHeight * positionInHour)
 
     return topPosition
   }
@@ -202,8 +231,12 @@ export function CalendarView({
 
         <div className="calendar-body">
           <div className="time-column">
-            {hours.map((hour) => (
-              <div key={hour} className="time-slot">
+            {hours.map((hour, index) => (
+              <div
+                key={hour}
+                className="time-slot"
+                ref={index === 0 ? timeCellRef : undefined}
+              >
                 {String(hour).padStart(2, '0')}:00
               </div>
             ))}

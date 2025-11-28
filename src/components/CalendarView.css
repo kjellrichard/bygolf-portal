@@ -320,7 +320,7 @@
   }
 }
 
-@media (max-width: 480px) {
+@media (max-width: 80px) {
   .calendar-day-group {
     min-width: 300px;
   }
