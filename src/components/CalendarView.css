@@ -244,7 +244,7 @@
   }
 
   .calendar-header {
-    flex-wrap: wrap;
+    flex-wrap: nowrap;
   }
 
   .calendar-day-group {
@@ -320,9 +320,12 @@
   }
 }
 
-@media (max-width: 80px) {
+
+
+@media (max-width: 480px) {
   .calendar-day-group {
     min-width: 300px;
+
   }
 
   .calendar-day-group-column {
@@ -340,6 +343,7 @@
   }
 
   .time-column-header {
+
     width: 50px;
     min-width: 50px;
     max-width: 50px;

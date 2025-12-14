@@ -188,8 +188,8 @@ export function CalendarView({
 
     let currentHour = now.getHours()
     let currentMinute = now.getMinutes()
-    currentMinute = 30
-    currentHour = 22
+    //currentMinute = 30
+    //currentHour = 22
     // Only show if current time is within the displayed hours (6-23)
     if (currentHour < 6 || currentHour > 23) return null
 
