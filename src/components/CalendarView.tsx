@@ -292,12 +292,15 @@ export function CalendarView({
                               const startMinutes =
                                 bookingStart.getHours() * 60 +
                                 bookingStart.getMinutes()
+
                               const endMinutes =
                                 bookingEnd.getHours() * 60 + bookingEnd.getMinutes()
+
                               const duration = endMinutes - startMinutes
                               const topOffset =
                                 ((startMinutes % 60) / 60) * 100
                               const height = (duration / 60) * 100
+                              console.log(booking.user.name, 'startMinutes', startMinutes, 'endMinutes', endMinutes, 'duration', duration, 'topOffset', topOffset, 'height', height)
                               const bayOption = bayOptions.find(option => option.id === booking.bayOptionId)
                               // Only render if this hour contains the booking start
                               if (
@@ -317,9 +320,9 @@ export function CalendarView({
                                     <div className="booking-user">
                                       {booking.user.name} - {bayOption?.name}
                                     </div>
-                                    <div className="booking-time">
+                                    {height >= 100 && <div className="booking-time">
                                       {booking.players} {booking.players === 1 ? 'player' : 'players'} | {formatTime(bookingStart)} - {formatTime(bookingEnd)}
-                                    </div>
+                                    </div>}
 
                                     {booking.notes && (
                                       <div className="booking-notes">{booking.notes}</div>

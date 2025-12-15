@@ -304,7 +304,7 @@
   .booking-block {
     font-size: 10px;
     padding: 3px 4px;
-    min-height: 35px;
+    /* min-height: 35px; */
   }
 
   .booking-time {
@@ -378,10 +378,11 @@
   border-radius: 4px;
   font-size: 11px;
   overflow: hidden;
+
   cursor: pointer;
   box-shadow: 0 1px 3px rgba(0, 0, 0, 0.2);
   z-index: 1;
-  min-height: 40px;
+  /* min-height: 40px; */
   display: flex;
   flex-direction: column;
   gap: 2px;
