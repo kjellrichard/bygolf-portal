@@ -1,4 +1,4 @@
-const Authorization = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZGVudGl0eUlkIjo2OTI4MDY0LCJybmQiOjAuNjg4MjAzMDEyMzQ0MzA2NiwiaWF0IjoxNzY1NDczNTk2LCJleHAiOjE3NjY2ODMxOTZ9.DoFA1hntX0TDVuG3urd4C9xAl1-lmI1vlGxM_hlv5b4'
+const Authorization = '<enter your authorization token here>'
 async function deleteCredential(credId) {
     const response = await fetch(`https://helium.prodeu1.openpath.com/orgs/16283/users/7124384/credentials/${credId}`, {
 
