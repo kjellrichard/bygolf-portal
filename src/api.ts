@@ -31,6 +31,9 @@ export async function fetchBookings(
       },
     })
     if (!response.ok) {
+      if (response.status === 401) {
+        throw new Error('TOKEN_EXPIRED')
+      }
       throw new Error(`Failed to fetch bookings: ${response.statusText}`)
     }
     const data = await response.json()
@@ -50,6 +53,9 @@ export async function fetchBayOptions({ bearerToken }: { bearerToken: string }):
     },
   })
   if (!response.ok) {
+    if (response.status === 401) {
+      throw new Error('TOKEN_EXPIRED')
+    }
     throw new Error(`Failed to fetch bay options: ${response.statusText}`)
   }
   const data = await response.json()

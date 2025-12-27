@@ -8,6 +8,7 @@ import {
     addDays,
     getWeekStart,
 } from './utils/dateUtils'
+import { isTokenExpired, getTokenExpiry } from './utils/tokenUtils'
 import './App.css'
 
 const TOKEN_STORAGE_KEY = 'bygolf_bearer_token'
@@ -17,6 +18,7 @@ function App() {
         return localStorage.getItem(TOKEN_STORAGE_KEY) || ''
     })
     const [showTokenPrompt, setShowTokenPrompt] = useState<boolean>(false)
+    const [tokenExpired, setTokenExpired] = useState<boolean>(false)
     const [showSettings, setShowSettings] = useState<boolean>(false)
     const today = new Date()
     const [viewMode, setViewMode] = useState<ViewMode>('day')
@@ -29,6 +31,12 @@ function App() {
     const [bayOptions, setBayOptions] = useState<BayOption[]>([])
 
     const loadBayOptions = async () => {
+        if (isTokenExpired(bearerToken)) {
+            setTokenExpired(true)
+            setShowTokenPrompt(true)
+            setError('Your token has expired. Please enter a new token.')
+            throw new Error('TOKEN_EXPIRED')
+        }
         const data = await fetchBayOptions({ bearerToken })
         setBayOptions(data)
     }
@@ -39,8 +47,26 @@ function App() {
             return
         }
 
+        // Check if token is expired before making API calls
+        if (isTokenExpired(bearerToken)) {
+            setTokenExpired(true)
+            setShowTokenPrompt(true)
+            setError('Your token has expired. Please enter a new token.')
+            return
+        }
+
         if (bayOptions.length === 0) {
-            await loadBayOptions()
+            try {
+                await loadBayOptions()
+            } catch (err) {
+                if (err instanceof Error && err.message === 'TOKEN_EXPIRED') {
+                    setTokenExpired(true)
+                    setShowTokenPrompt(true)
+                    setError('Your token has expired. Please enter a new token.')
+                    return
+                }
+                throw err
+            }
         }
 
         if (!silent) {
@@ -78,10 +104,17 @@ function App() {
                 fetchEndDate
             )
             setBookings(data)
+            setTokenExpired(false) // Reset expired flag on successful load
         } catch (err) {
-            setError(
-                err instanceof Error ? err.message : 'Failed to load bookings'
-            )
+            if (err instanceof Error && err.message === 'TOKEN_EXPIRED') {
+                setTokenExpired(true)
+                setShowTokenPrompt(true)
+                setError('Your token has expired. Please enter a new token.')
+            } else {
+                setError(
+                    err instanceof Error ? err.message : 'Failed to load bookings'
+                )
+            }
             setBookings([])
         } finally {
             if (!silent) {
@@ -90,24 +123,40 @@ function App() {
         }
     }
 
-    // Check if token is needed on mount
+    // Check if token is needed on mount or if token is expired
     useEffect(() => {
         if (!bearerToken.trim()) {
             setShowTokenPrompt(true)
+            setTokenExpired(false)
+        } else if (isTokenExpired(bearerToken)) {
+            setTokenExpired(true)
+            setShowTokenPrompt(true)
+            setError('Your token has expired. Please enter a new token.')
+        } else {
+            setTokenExpired(false)
         }
-    }, [])
+    }, [bearerToken])
 
     // Save token to localStorage when it changes
     useEffect(() => {
         if (bearerToken.trim()) {
-            localStorage.setItem(TOKEN_STORAGE_KEY, bearerToken)
-            setShowTokenPrompt(false)
-            // Load bookings if token was just set and we don't have bookings yet
-            if (bookings.length === 0 && !loading) {
-                loadBookings(false)
+            // Check if new token is expired
+            if (isTokenExpired(bearerToken)) {
+                setTokenExpired(true)
+                setShowTokenPrompt(true)
+                setError('The entered token has expired. Please enter a valid token.')
+            } else {
+                localStorage.setItem(TOKEN_STORAGE_KEY, bearerToken)
+                setTokenExpired(false)
+                setShowTokenPrompt(false)
+                // Load bookings if token was just set and we don't have bookings yet
+                if (bookings.length === 0 && !loading) {
+                    loadBookings(false)
+                }
             }
         } else {
             localStorage.removeItem(TOKEN_STORAGE_KEY)
+            setTokenExpired(false)
         }
         // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [bearerToken])
@@ -119,17 +168,54 @@ function App() {
         // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [viewMode, startDate, endDate])
 
+    // Check token expiry periodically (every minute)
+    useEffect(() => {
+        if (!bearerToken.trim()) return
+
+        const checkTokenExpiry = () => {
+            if (isTokenExpired(bearerToken)) {
+                setTokenExpired(true)
+                setShowTokenPrompt(true)
+                setError('Your token has expired. Please enter a new token.')
+            }
+        }
+
+        // Check immediately
+        checkTokenExpiry()
+
+        // Check every minute
+        const expiryCheckInterval = setInterval(checkTokenExpiry, 60000)
+
+        return () => {
+            clearInterval(expiryCheckInterval)
+        }
+    }, [bearerToken])
+
     // Auto-refresh every 30 seconds when tab is active
     useEffect(() => {
         if (!bearerToken.trim()) return
 
         const handleVisibilityChange = () => {
             if (document.visibilityState === 'visible') {
+                // Check token expiry when tab becomes visible
+                if (isTokenExpired(bearerToken)) {
+                    setTokenExpired(true)
+                    setShowTokenPrompt(true)
+                    setError('Your token has expired. Please enter a new token.')
+                    return
+                }
                 loadBookings(true) // Silent refresh
             }
         }
 
         const handleFocus = () => {
+            // Check token expiry when window gets focus
+            if (isTokenExpired(bearerToken)) {
+                setTokenExpired(true)
+                setShowTokenPrompt(true)
+                setError('Your token has expired. Please enter a new token.')
+                return
+            }
             loadBookings(true) // Silent refresh
         }
 
@@ -142,6 +228,13 @@ function App() {
         // Set up interval to refresh every 30 seconds
         const interval = setInterval(() => {
             if (document.visibilityState === 'visible') {
+                // Check token expiry before refreshing
+                if (isTokenExpired(bearerToken)) {
+                    setTokenExpired(true)
+                    setShowTokenPrompt(true)
+                    setError('Your token has expired. Please enter a new token.')
+                    return
+                }
                 loadBookings(true) // Silent refresh
             }
         }, 30000)
@@ -183,21 +276,39 @@ function App() {
     }
 
     const handleTokenSubmit = (token: string) => {
+        if (isTokenExpired(token)) {
+            setError('The entered token has expired. Please enter a valid token.')
+            return
+        }
         setBearerToken(token)
         setShowTokenPrompt(false)
+        setTokenExpired(false)
+        setError(null)
         // Automatically load bookings when token is set
         setTimeout(() => {
             loadBookings(false)
         }, 100)
     }
 
+    // Get token expiry info for display
+    const tokenExpiry = tokenExpired && bearerToken ? getTokenExpiry(bearerToken) : null
+
     return (
         <div className="app">
             {showTokenPrompt && (
                 <div className="token-prompt-overlay">
                     <div className="token-prompt-modal">
-                        <h2>Bearer Token Required</h2>
-                        <p>Please enter your bearer token to access the calendar:</p>
+                        <h2>{tokenExpired ? 'Token Expired' : 'Bearer Token Required'}</h2>
+                        <p>
+                            {tokenExpired
+                                ? 'Your bearer token has expired. Please enter a new token to continue accessing the calendar:'
+                                : 'Please enter your bearer token to access the calendar:'}
+                        </p>
+                        {tokenExpiry && (
+                            <p className="token-expiry-info">
+                                Previous token expired on: {tokenExpiry.toLocaleString()}
+                            </p>
+                        )}
                         <input
                             type="text"
                             placeholder="Enter bearer token"
@@ -221,7 +332,7 @@ function App() {
                                     }
                                 }}
                             >
-                                Save Token
+                                {tokenExpired ? 'Update Token' : 'Save Token'}
                             </button>
                         </div>
                     </div>

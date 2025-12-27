@@ -213,6 +213,17 @@ body {
   font-size: 14px;
 }
 
+.token-expiry-info {
+  margin: 0 0 16px 0;
+  color: #d32f2f;
+  font-size: 13px;
+  font-weight: 500;
+  padding: 8px 12px;
+  background-color: #ffebee;
+  border-left: 3px solid #d32f2f;
+  border-radius: 4px;
+}
+
 .token-prompt-input {
   width: 100%;
   padding: 10px 12px;
