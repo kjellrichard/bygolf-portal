@@ -288,19 +288,20 @@ export function CalendarView({
                           <div key={hour} className="time-cell">
                             {hourBookings.map((booking) => {
                               const bookingStart = new Date(booking.start)
-                              const bookingEnd = new Date(booking.end)
+                              let bookingEnd = new Date(booking.end)
+
                               const startMinutes =
                                 bookingStart.getHours() * 60 +
                                 bookingStart.getMinutes()
-
+                              const endHours = bookingEnd.getHours()
                               const endMinutes =
-                                bookingEnd.getHours() * 60 + bookingEnd.getMinutes()
-
+                                (endHours == 0 ? 24 : endHours) * 60 + bookingEnd.getMinutes()
+                              console.log(booking.user.name, 'startMinutes', startMinutes, 'endMinutes', endMinutes)
                               const duration = endMinutes - startMinutes
                               const topOffset =
                                 ((startMinutes % 60) / 60) * 100
                               const height = (duration / 60) * 100
-                              console.log(booking.user.name, 'startMinutes', startMinutes, 'endMinutes', endMinutes, 'duration', duration, 'topOffset', topOffset, 'height', height)
+
                               const bayOption = bayOptions.find(option => option.id === booking.bayOptionId)
                               // Only render if this hour contains the booking start
                               if (
